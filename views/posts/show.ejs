@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= post.title %></title>
+</head>
+<body>
+    <h1><%= post.title %></h1>
+    <p>Price: $<%= post.price %></p>
+    <p>Description: <%= post.description %></p>
+    <p>Location: <%= post.location %></p>
+    <div>
+        <a href="/posts/<%=post._id%>/edit"><button>Edit</button></a>
+        <form action="/posts/<%=post._id%>?_method=DELETE" method="POST">
+            <button>Delete</button>
+        </form>
+    </div>
+</body>
+</html>

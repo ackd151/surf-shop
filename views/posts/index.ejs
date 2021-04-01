@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <h1>Posts Index</h1>
+<% for (let post of posts) { %>
+    <div>
+        <h2><%= post.title %></h1>
+        <p>Price: $<%= post.price %></p>
+        <p>Description: <%= post.description %></p>
+        <p>Location: <%= post.location %></p>
+        <div><a href="/posts/<%=post._id%>">View more</a></div>
+    </div>    
+<% } %> 
+</body>
+</html>
