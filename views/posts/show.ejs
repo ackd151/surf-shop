@@ -9,6 +9,9 @@
 <body>
     <h1><%= post.title %></h1>
     <p>Price: $<%= post.price %></p>
+    <% for (let img of post.images) { %>
+       <img src="<%=img.url%>" alt="" style="height:200px"> 
+    <% } %> 
     <p>Description: <%= post.description %></p>
     <p>Location: <%= post.location %></p>
     <div>
