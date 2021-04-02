@@ -4,6 +4,8 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src='https://api.mapbox.com/mapbox-gl-js/v2.2.0/mapbox-gl.js'></script>
+    <link href='https://api.mapbox.com/mapbox-gl-js/v2.2.0/mapbox-gl.css' rel='stylesheet' />
     <title><%= post.title %></title>
 </head>
 <body>
@@ -12,6 +14,7 @@
     <% for (let img of post.images) { %>
        <img src="<%=img.url%>" alt="" style="height:200px"> 
     <% } %> 
+    <div id='map' style='width: 400px; height: 300px;'></div>
     <p>Description: <%= post.description %></p>
     <p>Location: <%= post.location %></p>
     <div>
@@ -20,5 +23,23 @@
             <button>Delete</button>
         </form>
     </div>
+    <script>
+        let post = <%-JSON.stringify(post)%>;
+        mapboxgl.accessToken = '<%=process.env.MAPBOX_ACCESS_TOKEN%>';
+        var map = new mapboxgl.Map({
+        container: 'map', // container ID
+        style: 'mapbox://styles/mapbox/streets-v11', // style URL
+        center: post.coordinates, // starting position [lng, lat]
+        zoom: 9 // starting zoom
+        });
+
+        // Add marker to map
+        var marker1 = new mapboxgl.Marker()
+            .setLngLat(post.coordinates)
+            .setPopup(new mapboxgl.Popup({ offset: 25 }) // add popups
+            .setHTML('<h3>' + post.title + '</h3><p>' + post.location + '</p>'))
+            .addTo(map);
+
+        </script>
 </body>
 </html>
