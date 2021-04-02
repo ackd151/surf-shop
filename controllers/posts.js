@@ -12,12 +12,12 @@ module.exports = {
     // Posts Index
     async postIndex(req, res, next) {
         const posts = await Post.find({});
-        res.render('posts/index', { posts });
+        res.render('posts/index', { posts, title: 'Posts Index' });
     },
 
     // Posts New
     postNew(req, res, next) {
-        res.render('posts/new');
+        res.render('posts/new', { title: 'New Post' });
     },
 
     // Posts Create
@@ -42,19 +42,20 @@ module.exports = {
         // Attach coordinates to req.body.post
         req.body.post.coordinates = response.body.features[0].geometry.coordinates;
         const newPost = await Post.create(req.body.post);
+        req.session.success = 'Post created successfully!';
         res.redirect(`posts/${newPost._id}`);
     },
 
     // Posts Show
     async postShow(req, res, next) {
         const post = await Post.findById(req.params.id);
-        res.render('posts/show', { post });
+        res.render('posts/show', { post, title: post.title });
     },
 
     // Posts Edit
     async postEdit(req, res, next) {
         const post = await Post.findById(req.params.id);
-        res.render('posts/edit', { post });
+        res.render('posts/edit', { post, title: 'Edit Post' });
     },
 
     // Posts Update
