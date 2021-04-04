@@ -3,12 +3,11 @@ const { Schema } = mongoose;
 
 const reviewSchema = new Schema({
     body: String,
+    rating: Number,
     author: {
         type: Schema.Types.ObjectId,
         ref: "User"
     }
 });
 
-const Review = mongoose.model('Review', reviewSchema);
-
-modeule.exports = Review;
+module.exports = mongoose.model('Review', reviewSchema);

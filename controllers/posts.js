@@ -41,6 +41,7 @@ module.exports = {
             .send();
         // Attach coordinates to req.body.post
         req.body.post.coordinates = response.body.features[0].geometry.coordinates;
+        req.body.post.author = req.user._id;
         const newPost = await Post.create(req.body.post);
         req.session.success = 'Post created successfully!';
         res.redirect(`posts/${newPost._id}`);
@@ -48,7 +49,20 @@ module.exports = {
 
     // Posts Show
     async postShow(req, res, next) {
-        const post = await Post.findById(req.params.id);
+        const post = await Post.findById(req.params.id).populate({
+            path: 'author',
+            model: 'User'
+        })
+        .populate({
+            path: 'reviews',
+            options: {
+                sort: { '_id': -1 }
+            },
+            populate: {
+                path: 'author',
+                model: 'User'
+            }
+        });
         res.render('posts/show', { post, title: post.title });
     },
 
@@ -105,6 +119,7 @@ module.exports = {
         post.description = req.body.post.description;
         // Save changes to db
         await post.save();
+        req.session.success = 'Post updated successfully.';
 		res.redirect(`/posts/${post.id}`);
 	},
 
@@ -115,6 +130,7 @@ module.exports = {
             await cloudinary.v2.uploader.destroy(img.public_id);
         }
         await post.remove();
+        req.session.success = 'Post deleted successfully.';
         res.redirect('/posts');
     }
 }

@@ -13,21 +13,68 @@
         <button>Delete</button>
     </form>
 </div>
-<script>
-    let post = <%-JSON.stringify(post)%>;
-    mapboxgl.accessToken = '<%=process.env.MAPBOX_ACCESS_TOKEN%>';
-    var map = new mapboxgl.Map({
-    container: 'map', // container ID
-    style: 'mapbox://styles/mapbox/streets-v11', // style URL
-    center: post.coordinates, // starting position [lng, lat]
-    zoom: 9 // starting zoom
-    });
+<p>Author: <%= post.author.username %>  </p>
+<h2>Create a review</h2>
+<form action="/posts/<%=post._id%>/reviews" method="POST">
+    <label for="body">Review</label><br>
+    <textarea name="review[body]" id="body" cols="30" rows="5" required></textarea><br>
+    <fieldset class="starability-basic">
+        <legend>Rating:</legend>
+        <input type="radio" id="rate0" class="input-no-rate" name="review[rating]" value="0" checked aria-label="No rating." />
+        <input type="radio" id="rate1" name="review[rating]" value="1" />
+        <label for="rate1" title="Terrible">1 star</label>
+        <input type="radio" id="rate2" name="review[rating]" value="2" />
+        <label for="rate2" title="Not good">2 stars</label>
+        <input type="radio" id="rate3" name="review[rating]" value="3" />
+        <label for="rate3" title="Average">3 stars</label>
+        <input type="radio" id="rate4" name="review[rating]" value="4" />
+        <label for="rate4" title="Very good">4 stars</label>
+        <input type="radio" id="rate5" name="review[rating]" value="5" />
+        <label for="rate5" title="Amazing">5 stars</label>
+    </fieldset>
+    <button>Submit</button>
+</form>
+<h3>Reviews</h3>
+<% for (let review of post.reviews) { %>
+    <div>
+        <div>
+            <p>Author: <%= review.author.username %></p>
+            <p class="starability-result" data-rating="<%= review.rating %>">
+                Rated: <%= review.rating %> stars
+              </p>
+            <p><%= review.body %></p>
+        </div>
+        <% if (review.author.equals(currentUser._id)) { %> 
+        <div>
+            <button class="toggle-edit-form">Edit</button>
+            <form action="/posts/<%=post._id%>/reviews/<%=review._id%>?_method=DELETE" method="POST">
+                <button>Delete</button>
+            </form>
+            <form action="/posts/<%=post._id%>/reviews/<%=review._id%>?_method=PUT" method="POST" class="edit-review-form">
+                <label for="body">Review</label><br>
+                <textarea name="review[body]" id="body" cols="30" rows="5" required><%= review.body  %></textarea><br>
+                <fieldset class="starability-basic">
+                    <legend>Rating:</legend>
+                    <input type="radio" id="edit-rate0" class="input-no-rate" name="review[rating]" value="0" checked aria-label="No rating." />
+                    <input type="radio" id="edit-rate1" name="review[rating]" value="1" />
+                    <label for="edit-rate1" title="Terrible">1 star</label>
+                    <input type="radio" id="edit-rate2" name="review[rating]" value="2" />
+                    <label for="edit-rate2" title="Not good">2 stars</label>
+                    <input type="radio" id="edit-rate3" name="review[rating]" value="3" />
+                    <label for="edit-rate3" title="Average">3 stars</label>
+                    <input type="radio" id="edit-rate4" name="review[rating]" value="4" />
+                    <label for="edit-rate4" title="Very good">4 stars</label>
+                    <input type="radio" id="edit-rate5" name="review[rating]" value="5" />
+                    <label for="edit-rate5" title="Amazing">5 stars</label>
+                </fieldset>
+                <button>Update</button>
+            </form>
 
-    // Add marker to map
-    var marker1 = new mapboxgl.Marker()
-        .setLngLat(post.coordinates)
-        .setPopup(new mapboxgl.Popup({ offset: 25 }) // add popups
-        .setHTML('<h3>' + post.title + '</h3><p>' + post.location + '</p>'))
-        .addTo(map);
-
-</script>
+            <script>
+                $('#edit-rate<%=review.rating%>').prop('checked', true);
+            </script>
+        </div>
+        <% } %> 
+    </div>
+    <hr>
+<% } %>
