@@ -19,9 +19,14 @@ const postSchema = new Schema({
             type: Schema.Types.ObjectId,
             ref: "Review" 
         }
-    ]
+    ],
+    avgRating: {
+        type: Number,
+        default: 0
+    }
 })
 
+// Cascade on delete
 postSchema.pre('remove', async function() {
     await Review.remove({
         _id: {
@@ -29,6 +34,22 @@ postSchema.pre('remove', async function() {
         }
     })
 })
+
+// Instance method to calculate average reviews
+postSchema.methods.calculateAvgRating = function() {
+    let ratingsTotal = 0;
+    if (this.reviews.length) {
+        for (let review of this.reviews) {
+            ratingsTotal += review.rating;
+        }
+        this.avgRating = Math.round((ratingsTotal / this.reviews.length) * 10) / 10;
+    } else {
+        this.avgRating = 0;
+    }
+    const floorRating = Math.floor(this.avgRating);
+    this.save();
+    return floorRating;
+}
 
 postSchema.plugin(paginate);
 

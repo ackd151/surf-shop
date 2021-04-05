@@ -67,6 +67,8 @@ app.use((req, res, next) => {
     "username" : "ack-d"
     // "_id" : "606a3bed0683514380db45f2",
     // "username" : "bob"
+    // "_id": '606b84fce339312df85e5131',
+    // "username": 'bill'
   }
   res.locals.currentUser = req.user;
   // set default page title

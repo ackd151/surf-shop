@@ -7,6 +7,17 @@
 <div id='map' style='width: 400px; height: 300px;'></div>
 <p>Description: <%= post.description %></p>
 <p>Location: <%= post.location %></p>
+<p>Community rating: 
+    <% for (let i = 0; i < 5; ++i) { %>
+        <% if (i < floorRating) { %>
+            <i class="fas fa-star"></i>
+        <% } else if ((post.avgRating - i) > 0 && (post.avgRating - i) < 1) { %>
+            <i class="fas fa-star-half-alt"></i>
+        <% } else { %>
+            <i class="far fa-star"></i>
+        <% } %>
+    <% } %> 
+</p>
 <div>
     <a href="/posts/<%=post._id%>/edit"><button>Edit</button></a>
     <form action="/posts/<%=post._id%>?_method=DELETE" method="POST">
