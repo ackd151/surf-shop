@@ -15,9 +15,9 @@
 </div>
 <div>
     <% for (let img in post.images) { %>
-        <img src="<%=post.images[img].url%>" alt="" width="100px">
+        <img src="<%=post.images[img].path%>" alt="" width="100px">
         <label for="image<%=img%>">Delete?</label>
-        <input type="checkbox" id="image<%=img%>" name="deleteImages[]" class="imageDeleteCheckbox" value="<%=post.images[img].public_id%>">    
+        <input type="checkbox" id="image<%=img%>" name="deleteImages[]" class="imageDeleteCheckbox" value="<%=post.images[img].filename%>">    
     <% } %> 
 </div>
 <div>

@@ -1,12 +1,7 @@
 const Post = require('../models/post');
 const mbxGeocoding = require('@mapbox/mapbox-sdk/services/geocoding');
 const geocodingClient = mbxGeocoding({ accessToken: process.env.MAPBOX_ACCESS_TOKEN });
-const cloudinary = require('cloudinary');
-cloudinary.config({
-    cloud_name: 'ackd151',
-    api_key: '988843633939511',
-    api_secret: process.env.CLOUDINARY_SECRET
-})
+const { cloudinary } = require('../cloudinary');
 
 module.exports = {
     // Posts Index
@@ -14,7 +9,7 @@ module.exports = {
         const posts = await Post.paginate({}, {
             page: req.query.page || 1,
             limit: 10,
-            sort: { '_id': -1 }
+            sort: { '_id': -1 } // or sort: '-_id'
         });
         posts.page = Number(posts.page);
         const mapBoxToken = process.env.MAPBOX_ACCESS_TOKEN;
@@ -30,12 +25,10 @@ module.exports = {
     async postCreate(req, res, next) {
         req.body.post.images = [];
         for (let file of req.files) {
-            // Upload images to cloudinary
-            let image = await cloudinary.v2.uploader.upload(file.path, { folder: 'surf-shop'});
-            // Push image url, public_id onto post.images
+            // Push image path, filename onto post.images
             req.body.post.images.push({
-                url: image.secure_url,
-                public_id: image.public_id
+                path: file.path,
+                filename: file.filename
             });
         }
         // Get location coordinates from mapbox
@@ -88,12 +81,12 @@ module.exports = {
         // Handle image deletion
         if (req.body.deleteImages && req.body.deleteImages.length) {
             const deleting = req.body.deleteImages;
-            for (let public_id of deleting) {
+            for (let filename of deleting) {
                 // Remove from cloudinary hosting
-                await cloudinary.v2.uploader.destroy(public_id);
+                await cloudinary.uploader.destroy(filename);
                 // Remove form post object
                 for (let img of post.images) {
-                    if (img.public_id === public_id) {
+                    if (img.filename === filename) {
                         let index = post.images.indexOf(img);
                         post.images.splice(index, 1);
                     }
@@ -103,10 +96,9 @@ module.exports = {
         // Handle new images upload
         if (req.files) {
             for (let file of req.files) {
-                let image = await cloudinary.v2.uploader.upload(file.path, { folder: 'surf-shop'});
                 post.images.push({
-                    url: image.secure_url,
-                    public_id: image.public_id
+                    path: file.path,
+                    filename: file.filename
                 });
             }
         }
@@ -138,7 +130,7 @@ module.exports = {
     async postDelete(req, res, next) {
         let post = await Post.findById(req.params.id); 
         for (let img of post.images) {
-            await cloudinary.v2.uploader.destroy(img.public_id);
+            await cloudinary.uploader.destroy(img.filename);
         }
         await post.remove();
         req.session.success = 'Post deleted successfully.';

@@ -2,7 +2,7 @@
 <h1><%= post.title %></h1>
 <p>Price: $<%= post.price %></p>
 <% for (let img of post.images) { %>
-    <img src="<%=img.url%>" alt="" style="height:200px"> 
+    <img src="<%=img.path%>" alt="post image" style="height:200px"> 
 <% } %> 
 <div id='map' style='width: 400px; height: 300px;'></div>
 <p>Description: <%= post.description %></p>

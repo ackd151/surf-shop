@@ -19,7 +19,7 @@
 <% include ../partials/paginate-posts %>
 
 <script>
-    mapboxgl.accessToken = "<%=mapBoxToken%>";
-    const posts = { features: <%- JSON.stringify(posts) %> };
+	mapboxgl.accessToken = "<%= mapBoxToken %>";
+	var posts = { features: <%- JSON.stringify(posts.docs) %> };
 </script>
 <script src="/javascripts/allPostsClusterMap.js"></script>
