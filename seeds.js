@@ -1,25 +1,33 @@
 const faker = require('faker');
 const Post = require('./models/post');
+const cities = require('./cities');
 
-console.log('seeds.js');
-const numPosts = 40;
 async function seedPosts() {
-    await Post.deleteMany({});
-    for (const i of new Array(numPosts)) {
-        const post = {
-            title: faker.lorem.word(),
-            description: faker.lorem.text(),
-            location: 'San Francisco',
-            coordinates: [-122.420679, 37.772537],
-            price: faker.datatype.number({'min': 1, 'max': 1000}),
-            author: {
-                '_id': '6063a96d49df42196c38a915',
-                username: 'ack-d'
-            }
-        }
-        await Post.create(post);
-    }
-    console.log(`${numPosts} new posts created`);
+	await Post.remove({});
+	for(const i of new Array(600)) {
+		const random1000 = Math.floor(Math.random() * 1000);
+		const title = faker.lorem.word();
+		const price = faker.datatype.number({"min": 1, "max": 1000});
+		const description = faker.lorem.text();
+		const postData = {
+			title,
+			price,
+			description,
+			location: `${cities[random1000].city}, ${cities[random1000].state}`,
+			geometry: {
+				type: 'Point',
+				coordinates: [cities[random1000].longitude, cities[random1000].latitude],
+			},
+			author: {
+		    '_id' : '6063a96d49df42196c38a915',
+		    'username' : 'ack-d'
+		  }
+		}
+		let post = new Post(postData);
+		post.properties.description = `<strong><a href="/posts/${post._id}">${title}</a></strong><p>${post.location}</p><p>${description.substring(0, 20)}...</p>`;
+		await post.save();
+	}
+	console.log('600 new posts created');
 }
 
 module.exports = seedPosts;

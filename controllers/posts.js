@@ -13,10 +13,12 @@ module.exports = {
     async postIndex(req, res, next) {
         const posts = await Post.paginate({}, {
             page: req.query.page || 1,
-            limit: 10
+            limit: 10,
+            sort: { '_id': -1 }
         });
         posts.page = Number(posts.page);
-        res.render('posts/index', { posts, title: 'Posts Index' });
+        const mapBoxToken = process.env.MAPBOX_ACCESS_TOKEN;
+        res.render('posts/index', { posts, title: 'Posts Index', mapBoxToken });
     },
 
     // Posts New
@@ -43,12 +45,14 @@ module.exports = {
                 limit: 1
             })
             .send();
-        // Attach coordinates to req.body.post
-        req.body.post.coordinates = response.body.features[0].geometry.coordinates;
+        // Attach geometry to req.body.post
+        req.body.post.geometry = response.body.features[0].geometry;
         req.body.post.author = req.user._id;
-        const newPost = await Post.create(req.body.post);
+        const post = new Post(req.body.post);
+        post.properties.description = `<strong><a href="/posts/${post._id}">${post.title}</a></strong><p>${post.location}</p><p>${post.description.substring(0, 20)}...</p>`;
+        await post.save();
         req.session.success = 'Post created successfully!';
-        res.redirect(`posts/${newPost._id}`);
+        res.redirect(`posts/${post._id}`);
     },
 
     // Posts Show
@@ -116,13 +120,14 @@ module.exports = {
                 })
                 .send();
             // Attach coordinates to post
-            post.coordinates = response.body.features[0].geometry.coordinates;
+            post.geometry = response.body.features[0].geometry;
             post.location = req.body.post.location;
         }
         // Change remaining properties
         post.title = req.body.post.title;
         post.price = req.body.post.price;
         post.description = req.body.post.description;
+        post.properties.description = `<strong><a href="/posts/${post._id}">${post.title}</a></strong><p>${post.location}</p><p>${post.description.substring(0, 20)}...</p>`;
         // Save changes to db
         await post.save();
         req.session.success = 'Post updated successfully.';
