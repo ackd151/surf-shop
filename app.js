@@ -62,14 +62,14 @@ passport.deserializeUser(User.deserializeUser());
 // set local variables middleware
 // set user / dev
 app.use((req, res, next) => {
-  req.user = { 
-    "_id" : "6063a96d49df42196c38a915",
-    "username" : "ack-d"
-    // "_id" : "606a3bed0683514380db45f2",
-    // "username" : "bob"
-    // "_id": '606b84fce339312df85e5131',
-    // "username": 'bill'
-  }
+  // req.user = { 
+  //   "_id" : "6063a96d49df42196c38a915",
+  //   "username" : "ack-d"
+  //   // "_id" : "606a3bed0683514380db45f2",
+  //   // "username" : "bob"
+  //   // "_id": '606b84fce339312df85e5131',
+  //   // "username": 'bill'
+  // }
   res.locals.currentUser = req.user;
   // set default page title
   res.locals.title = 'Surf Shop';
@@ -95,15 +95,15 @@ app.use(function(req, res, next) {
 app.use(function(err, req, res, next) {
   console.log(err);
   req.session.error = err.message;
-  // res.redirect('back'); // goes back to previous page
+  res.redirect('back'); // goes back to previous page
 
-  // set locals, only providing error in development
-  res.locals.message = err.message;
-  res.locals.error = req.app.get('env') === 'development' ? err : {};
+  // // set locals, only providing error in development
+  // res.locals.message = err.message;
+  // res.locals.error = req.app.get('env') === 'development' ? err : {};
 
-  // render the error page
-  res.status(err.status || 500);
-  res.render('error');
+  // // render the error page
+  // res.status(err.status || 500);
+  // res.render('error');
 });
 
 module.exports = app;

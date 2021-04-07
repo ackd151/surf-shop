@@ -70,14 +70,13 @@ module.exports = {
     },
 
     // Posts Edit
-    async postEdit(req, res, next) {
-        const post = await Post.findById(req.params.id);
-        res.render('posts/edit', { post, title: 'Edit Post' });
+    postEdit(req, res, next) {
+        res.render('posts/edit', { title: 'Edit Post' });
     },
 
     // Posts Update
 	async postUpdate(req, res, next) {
-		const post = await Post.findById(req.params.id);
+        const { post } = res.locals;
         // Handle image deletion
         if (req.body.deleteImages && req.body.deleteImages.length) {
             const deleting = req.body.deleteImages;
@@ -128,7 +127,8 @@ module.exports = {
 
     // Posts Delete
     async postDelete(req, res, next) {
-        let post = await Post.findById(req.params.id); 
+        // let post = await Post.findById(req.params.id);
+        const { post } = res.locals;
         for (let img of post.images) {
             await cloudinary.uploader.destroy(img.filename);
         }

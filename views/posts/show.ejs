@@ -18,13 +18,16 @@
         <% } %>
     <% } %> 
 </p>
+<% if (currentUser && post.author.equals(currentUser._id)) { %> 
 <div>
     <a href="/posts/<%=post._id%>/edit"><button>Edit</button></a>
     <form action="/posts/<%=post._id%>?_method=DELETE" method="POST">
         <button>Delete</button>
     </form>
 </div>
+<% } %> 
 <p>Author: <%= post.author.username %>  </p>
+<% if (currentUser) { %> 
 <h2>Create a review</h2>
 <form action="/posts/<%=post._id%>/reviews" method="POST">
     <label for="body">Review</label><br>
@@ -45,6 +48,9 @@
     </fieldset>
     <button>Submit</button>
 </form>
+<% } else { %>
+    <h2><a href="/login?returnTo=true">Create a review</a></h2>
+<% } %> 
 <h3>Reviews</h3>
 <% for (let review of post.reviews) { %>
     <div>
@@ -55,7 +61,7 @@
               </p>
             <p><%= review.body %></p>
         </div>
-        <% if (review.author.equals(currentUser._id)) { %> 
+        <% if (currentUser && review.author.equals(currentUser._id)) { %> 
         <div>
             <button class="toggle-edit-form">Edit</button>
             <form action="/posts/<%=post._id%>/reviews/<%=review._id%>?_method=DELETE" method="POST">

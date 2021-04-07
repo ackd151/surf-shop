@@ -1,5 +1,29 @@
-<ul>
-    <li><a href="/">Home</a></li>
-    <li><a href="/posts">Posts</a></li>
-    <li><a href="/posts/new">New Post</a></li>
-</ul>
+<style>
+    nav {
+        display: flex;
+        justify-content: space-between;
+        padding: 0;
+        margin: 0;
+    }
+    nav * {
+        display: inline;
+    }
+</style>
+<nav>
+    <div class="navigation">
+        <a href="/">Home</a>
+        <a href="/posts">Posts</a>
+        <% if (currentUser) { %> 
+            <a href="/posts/new">New Post</a>
+        <% } %> 
+    </div>
+    <div class="logging">
+        <% if (!currentUser) { %>
+            <a href="/register">Register</a>
+            <a href="/login">Login</a>
+        <% } else { %>
+            <p>Welcome, <%= currentUser.username %></p>
+            <a href="/logout">Logout</a>
+        <% } %>
+    </div>
+</nav>
