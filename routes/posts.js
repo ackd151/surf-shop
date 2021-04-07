@@ -4,7 +4,15 @@ const multer = require('multer');
 const { cloudinary, storage } = require('../cloudinary');
 const upload = multer({ storage });
 const { asyncErrorHandler, isLoggedIn, isAuthor } = require('../middleware');
-const { postIndex, postNew, postCreate, postShow, postEdit, postUpdate, postDelete } = require('../controllers/posts');
+const { 
+    postIndex, 
+    postNew, 
+    postCreate, 
+    postShow, 
+    postEdit, 
+    postUpdate, 
+    postDelete 
+} = require('../controllers/posts');
 
 /* GET posts index /posts */
 router.get('/', asyncErrorHandler(postIndex));

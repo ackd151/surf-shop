@@ -1,6 +1,7 @@
 const User = require('../models/user');
 const Post = require('../models/post');
 const passport = require('passport');
+const util = require('util');
 
 module.exports = {
     // GET /
@@ -58,5 +59,24 @@ module.exports = {
 	getLogout(req, res, next) {
         req.logout();
         res.redirect('/');
+    }, 
+
+    // GET /profile
+    async getProfile(req, res, next) {
+        const posts = await Post.find().where('author').equals(req.user._id).limit(10).exec();
+        res.render('profile', { posts });
+    },
+
+    // PUT /profile
+    async updateProfile(req, res, next) {
+        const { username, email } = req.body;
+        const { user } = res.locals;
+        if (username) user.username = username;
+        if (email) user.email = email;
+        await user.save();
+        const login = util.promisify(req.login.bind(req));
+        await login(user);
+        req.session.success = 'Profile updated successfully!'
+        res.redirect('/profile');
     }
 }

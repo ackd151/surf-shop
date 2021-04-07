@@ -9,7 +9,7 @@
         display: inline;
     }
 </style>
-<nav>
+<nav id="navbar">
     <div class="navigation">
         <a href="/">Home</a>
         <a href="/posts">Posts</a>
@@ -23,6 +23,7 @@
             <a href="/login">Login</a>
         <% } else { %>
             <p>Welcome, <%= currentUser.username %></p>
+            <a href="/profile">Profile</a>
             <a href="/logout">Logout</a>
         <% } %>
     </div>
