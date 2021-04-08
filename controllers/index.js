@@ -2,6 +2,8 @@ const User = require('../models/user');
 const Post = require('../models/post');
 const passport = require('passport');
 const util = require('util');
+const { cloudinary } = require('../cloudinary');
+const { deleteProfileImage } = require('../middleware');
 
 module.exports = {
     // GET /
@@ -18,6 +20,10 @@ module.exports = {
     // POST /register
 	async postRegister(req, res, next) {
 		try {
+            if (req.file) {
+                const { path, filename } = req.file;
+                req.body.image = { path, filename };
+            }
 			const user = await User.register(new User(req.body), req.body.password);
 			req.login(user, function(err) {
 				if (err) return next(err);
@@ -25,6 +31,7 @@ module.exports = {
 				res.redirect('/');
 			});
 		} catch(err) {
+            deleteProfileImage(req);
 			const { username, email } = req.body;
 			let error = err.message;
 			if (error.includes('duplicate') && error.includes('index: email_1 dup key')) {
@@ -73,6 +80,10 @@ module.exports = {
         const { user } = res.locals;
         if (username) user.username = username;
         if (email) user.email = email;
+        if (req.file) {
+            if (user.image.filename) await cloudinary.uploader.destroy(user.image.filename);
+            user.image = { path: req.file.path, filename: req.file.filename };
+        }
         await user.save();
         const login = util.promisify(req.login.bind(req));
         await login(user);

@@ -24,3 +24,8 @@ a {
 .color-red {
   color: red;
 }
+
+.profile-image {
+  border-radius: 50%;
+  width: 100px;
+}
