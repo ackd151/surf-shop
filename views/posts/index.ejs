@@ -1,23 +1,30 @@
 <% layout('layouts/boilerplate') -%>
 <h1>Posts Index</h1>
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-4">
+            <% include ../partials/searchFilter %>
+        </div>
+        <div class="col-8">
+            <div id="map"></div>
+        </div>
+    </div>
 
-<div id="map"></div>
 
+    <% include ../partials/paginate-posts %>
 
-<% include ../partials/paginate-posts %>
+    <% for (let post of posts.docs) { %>
+        <div>
+            <h2><%= post.title %></h1>
+            <p>Price: $<%= post.price %></p>
+            <p>Description: <%= post.description %></p>
+            <p>Location: <%= post.location %></p>
+            <div><a href="/posts/<%=post._id%>">View more</a></div>
+        </div>    
+    <% } %>
 
-<% for (let post of posts.docs) { %>
-    <div>
-        <h2><%= post.title %></h1>
-        <p>Price: $<%= post.price %></p>
-        <p>Description: <%= post.description %></p>
-        <p>Location: <%= post.location %></p>
-        <div><a href="/posts/<%=post._id%>">View more</a></div>
-    </div>    
-<% } %>
-
-<% include ../partials/paginate-posts %>
-
+    <% include ../partials/paginate-posts %>
+</div>
 <script>
 	mapboxgl.accessToken = "<%= mapBoxToken %>";
 	var posts = { features: <%- JSON.stringify(posts.docs) %> };
