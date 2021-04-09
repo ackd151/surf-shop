@@ -46,6 +46,9 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(methodOverride('_method'));
 
+// Add moment to every view
+app.locals.moment = require('moment');
+
 // Config passport and session
 app.use(session({
   secret: 'local session secret',
