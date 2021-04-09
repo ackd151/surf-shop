@@ -85,11 +85,17 @@ const middleware = {
                 ]});
             }
             if (location) {
-                const response = geocodingClient.forwardGeocode({
-                    query: location,
-                    limit: 1
-                }).send();
-                const { coordinates } = response.body.features[0].geometry;
+                let coordinates;
+                try {
+                    location = JSON.parse(location);
+                    coordinates = location;
+                } catch(err) {
+                    const response = geocodingClient.forwardGeocode({
+                        query: location,
+                        limit: 1
+                    }).send();
+                    coordinates = response.body.features[0].geometry.coordinates;
+                }
                 let maxDistance = distance || 25;
                 maxDistance *= 1609.34;
                 dbQueries.push({
